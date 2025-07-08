@@ -1,0 +1,19 @@
+{
+  "name": "goosecpi",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "setup-db": "node scripts/setup-database.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "csv-parser": "^3.0.0",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1",
+    "path": "^0.12.7",
+    "pug": "^3.0.3",
+    "sqlite3": "^5.1.6"
+  }
+}
