@@ -1,0 +1,155 @@
+extends layout
+
+block content
+  .container
+    // 標題區域
+    .hero-section
+      h1 🦢 鵝價消費者物價指數 (CPI) 儀表板
+      p.lead 透過數據視覺化深入了解鵝價市場趨勢與消費者物價指數變化
+
+      // 統計卡片
+      .stats-row.row.g-4.mb-5
+        .col-md-3.col-6
+          .stat-card
+            .stat-icon 📈
+            .stat-number#totalRecords 載入中...
+            .stat-label 總記錄數
+        .col-md-3.col-6
+          .stat-card
+            .stat-icon 📅
+            .stat-number#yearRange 載入中...
+            .stat-label 數據年份範圍
+        .col-md-3.col-6
+          .stat-card
+            .stat-icon 🐣
+            .stat-number#avgChickCPI 載入中...
+            .stat-label 雛鵝平均 CPI
+        .col-md-3.col-6
+          .stat-card
+            .stat-icon 🥩
+            .stat-number#avgMeatCPI 載入中...
+            .stat-label 鵝肉平均 CPI
+
+    // 控制面板
+    .dashboard-controls
+      .form-group
+        label(for="yearFilter")
+          i.fas.fa-filter
+          | 選擇年份範圍:
+        select#startYear.form-control(style="display: inline-block; width: 140px; margin: 0 10px;")
+          option(value="") 起始年份
+        span.mx-2 至
+        select#endYear.form-control(style="display: inline-block; width: 140px; margin: 0 10px;")
+          option(value="") 結束年份
+        button#updateChart.btn.btn-primary(style="margin-left: 10px;")
+          i.fas.fa-sync-alt.me-2
+          | 更新圖表
+
+        // 匯出按鈕
+        .export-buttons.ms-3
+          .btn-group(role="group")
+            button#exportPNG.btn.btn-outline-secondary.btn-sm(title="匯出為 PNG")
+              i.fas.fa-download
+            button#exportCSV.btn.btn-outline-secondary.btn-sm(title="匯出為 CSV")
+              i.fas.fa-file-csv
+            button#fullscreen.btn.btn-outline-secondary.btn-sm(title="全螢幕模式")
+              i.fas.fa-expand
+
+    // 圖表容器
+    .charts-container
+      // 主要趨勢圖
+      .row
+        .col-md-12
+          .chart-wrapper
+            .chart-header
+              h3 📊 CPI 趨勢圖 - 雛鵝與鵝肉價格指數
+              .chart-controls
+                button.btn.btn-sm.btn-outline-primary(onclick="resetZoom('cpiTrendChart')")
+                  i.fas.fa-search-minus.me-1
+                  | 重置縮放
+            canvas#cpiTrendChart(width="800" height="400")
+            .chart-info
+              small.text-muted 💡 提示：點擊並拖拽可縮放圖表，雙擊可重置
+
+      // 分析圖表
+      .row.mt-4
+        .col-md-6
+          .chart-wrapper
+            .chart-header
+              h3 🐣 年度平均 CPI - 雛鵝
+              .chart-badge.badge.bg-info 年度統計
+            canvas#chickCpiChart(width="400" height="300")
+            .chart-footer
+              small.text-muted 數據來源：養鵝協會價格統計
+        .col-md-6
+          .chart-wrapper
+            .chart-header
+              h3 🥩 年度平均 CPI - 鵝肉
+              .chart-badge.badge.bg-warning 年度統計
+            canvas#meatCpiChart(width="400" height="300")
+            .chart-footer
+              small.text-muted 數據來源：養鵝協會價格統計
+
+    // 數據洞察區塊
+    .insights-section.mt-5
+      h3.section-title
+        i.fas.fa-lightbulb.me-2
+        | 數據洞察
+      .row.g-4
+        .col-md-4
+          .insight-card
+            .insight-icon.trend-up 📈
+            h5 價格趨勢
+            p#trendInsight 分析中...
+        .col-md-4
+          .insight-card
+            .insight-icon.volatility ⚡
+            h5 波動性分析
+            p#volatilityInsight 分析中...
+        .col-md-4
+          .insight-card
+            .insight-icon.correlation 🔗
+            h5 相關性分析
+            p#correlationInsight 分析中...
+
+    // API 資訊區塊
+    .api-info
+      .api-header
+        h3
+          i.fas.fa-code.me-2
+          | API 端點
+        .api-status
+          span.badge.bg-success
+            i.fas.fa-circle.me-1
+            | 服務正常
+
+      .api-grid
+        .api-item
+          .api-method.get GET
+          a(href="/api/goose-cpi", target="_blank") /api/goose-cpi
+          .api-description 取得鵝價 CPI 詳細資料
+        .api-item
+          .api-method.get GET
+          a(href="/api/years", target="_blank") /api/years
+          .api-description 取得可用年份清單
+        .api-item
+          .api-method.get GET
+          a(href="/api/cpi-summary", target="_blank") /api/cpi-summary
+          .api-description 取得年度 CPI 統計摘要
+
+    // 頁腳
+    .footer.mt-5
+      .row.align-items-center
+        .col-md-6
+          p.mb-0
+            i.fas.fa-info-circle.me-2
+            | 最後更新：
+            span#lastUpdate 載入中...
+        .col-md-6.text-end
+          .social-links
+            a.btn.btn-outline-primary.btn-sm.me-2(href="#", title="分享報告")
+              i.fas.fa-share-alt
+            a.btn.btn-outline-success.btn-sm.me-2(href="#", title="下載報告")
+              i.fas.fa-file-pdf
+            a.btn.btn-outline-info.btn-sm(href="#", title="幫助")
+              i.fas.fa-question-circle
