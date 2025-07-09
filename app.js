@@ -73,7 +73,7 @@ app.get('/api/goose-cpi', (req, res) => {
 app.get('/api/years', (req, res) => {
   const db = new sqlite3.Database(dbPath);
 
-  db.all('SELECT DISTINCT year FROM goose_prices ORDER BY year', (err, rows) => {
+  db.all('SELECT DISTINCT year FROM goose_cpi ORDER BY year', (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
