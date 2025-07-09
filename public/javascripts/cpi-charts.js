@@ -234,7 +234,12 @@ function setupEventListeners() {
         updateBtn.addEventListener('click', function() {
             const startYear = document.getElementById('startYear').value;
             const endYear = document.getElementById('endYear').value;
+            
+            // 更新圖表和統計數據
             loadCPIData(startYear, endYear);
+            loadSummaryData(startYear, endYear);
+            updateStatistics(startYear, endYear);
+            updateInsights();
         });
     }
 
@@ -305,9 +310,19 @@ async function loadCPIData(startYear = '', endYear = '') {
     }
 }
 
-async function loadSummaryData() {
+async function loadSummaryData(startYear = '', endYear = '') {
     try {
-        const response = await fetch('/api/cpi-summary');
+        let url = '/api/cpi-summary';
+        const params = new URLSearchParams();
+        
+        if (startYear) params.append('startYear', startYear);
+        if (endYear) params.append('endYear', endYear);
+        
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+
+        const response = await fetch(url);
         const summaryData = await response.json();
 
         if (summaryData && summaryData.length > 0) {
@@ -394,11 +409,26 @@ function updateSummaryCharts(summaryData) {
     }
 }
 
-async function updateStatistics() {
+async function updateStatistics(startYear = '', endYear = '') {
     try {
+        // 根據年份範圍構建 API URL
+        let cpiUrl = '/api/goose-cpi?limit=10000';
+        let summaryUrl = '/api/cpi-summary';
+        
+        if (startYear && endYear) {
+            cpiUrl += `&startYear=${startYear}&endYear=${endYear}`;
+            summaryUrl += `?startYear=${startYear}&endYear=${endYear}`;
+        } else if (startYear) {
+            cpiUrl += `&startYear=${startYear}`;
+            summaryUrl += `?startYear=${startYear}`;
+        } else if (endYear) {
+            cpiUrl += `&endYear=${endYear}`;
+            summaryUrl += `?endYear=${endYear}`;
+        }
+
         const [cpiResponse, summaryResponse] = await Promise.all([
-            fetch('/api/goose-cpi?limit=10000'),
-            fetch('/api/cpi-summary')
+            fetch(cpiUrl),
+            fetch(summaryUrl)
         ]);
 
         const cpiData = await cpiResponse.json();
@@ -410,25 +440,68 @@ async function updateStatistics() {
         const avgChickCPI = document.getElementById('avgChickCPI');
         const avgMeatCPI = document.getElementById('avgMeatCPI');
 
-        if (totalRecords) totalRecords.textContent = cpiData.length;
+        if (totalRecords) {
+            totalRecords.textContent = cpiData.length.toLocaleString();
+        }
 
         if (yearRange && summaryData.length > 0) {
             const years = summaryData.map(item => item.year);
-            yearRange.textContent = `${Math.min(...years)} - ${Math.max(...years)}`;
+            const minYear = Math.min(...years);
+            const maxYear = Math.max(...years);
+            
+            if (minYear === maxYear) {
+                yearRange.textContent = minYear.toString();
+            } else {
+                yearRange.textContent = `${minYear} - ${maxYear}`;
+            }
+        } else if (yearRange) {
+            yearRange.textContent = '無資料';
         }
 
         if (avgChickCPI && summaryData.length > 0) {
-            const avg = summaryData.reduce((sum, item) => sum + (item.avg_chick_cpi || 0), 0) / summaryData.length;
-            avgChickCPI.textContent = avg.toFixed(1);
+            const validChickCPI = summaryData.filter(item => item.avg_chick_cpi !== null);
+            if (validChickCPI.length > 0) {
+                const avg = validChickCPI.reduce((sum, item) => sum + item.avg_chick_cpi, 0) / validChickCPI.length;
+                avgChickCPI.textContent = avg.toFixed(1);
+            } else {
+                avgChickCPI.textContent = 'N/A';
+            }
         }
 
         if (avgMeatCPI && summaryData.length > 0) {
-            const avg = summaryData.reduce((sum, item) => sum + (item.avg_meat_cpi || 0), 0) / summaryData.length;
-            avgMeatCPI.textContent = avg.toFixed(1);
+            const validMeatCPI = summaryData.filter(item => item.avg_meat_cpi !== null);
+            if (validMeatCPI.length > 0) {
+                const avg = validMeatCPI.reduce((sum, item) => sum + item.avg_meat_cpi, 0) / validMeatCPI.length;
+                avgMeatCPI.textContent = avg.toFixed(1);
+            } else {
+                avgMeatCPI.textContent = 'N/A';
+            }
+        }
+
+        // 顯示篩選狀態
+        if (startYear || endYear) {
+            if (window.dashboard) {
+                const filterText = startYear && endYear ? 
+                    `已篩選 ${startYear}-${endYear} 年數據` :
+                    startYear ? `已篩選 ${startYear} 年後數據` :
+                    `已篩選 ${endYear} 年前數據`;
+                window.dashboard.showSuccess(filterText);
+            }
         }
 
     } catch (error) {
         console.error('Error updating statistics:', error);
+        
+        // 顯示錯誤狀態
+        const elements = ['totalRecords', 'yearRange', 'avgChickCPI', 'avgMeatCPI'];
+        elements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = '錯誤';
+        });
+        
+        if (window.dashboard) {
+            window.dashboard.showError('統計數據更新失敗');
+        }
     }
 }
 

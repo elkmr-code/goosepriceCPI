@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦢 鵝價消費者物價指數 (CPI) 儀表板</title>
-    <meta name="description" content="鵝價消費者物價指數視覺化分析系統">
-
-    <!-- 載入字體 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
-
-    <!-- Font Awesome 圖標 -->
+<!-- Font Awesome 圖標 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- 載入 CSS 框架 -->
@@ -41,35 +26,27 @@
             <h1>🦢 鵝價消費者物價指數 (CPI) 儀表板</h1>
             <p class="lead">透過數據視覺化深入了解鵝價市場趨勢與消費者物價指數變化</p>
 
-            <!-- 統計卡片 -->
-            <div class="stats-row row g-4 mb-5">
-                <div class="col-md-3 col-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">📈</div>
-                        <div class="stat-number" id="totalRecords">載入中...</div>
-                        <div class="stat-label">總記錄數</div>
-                    </div>
+            <!-- 統計卡片 - 2x2 網格佈局 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-number" id="yearRange">載入中...</div>
+                    <div class="stat-label">數據年份範圍</div>
                 </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">📅</div>
-                        <div class="stat-number" id="yearRange">載入中...</div>
-                        <div class="stat-label">數據年份範圍</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-number" id="totalRecords">載入中...</div>
+                    <div class="stat-label">記錄數量</div>
                 </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">🐣</div>
-                        <div class="stat-number" id="avgChickCPI">載入中...</div>
-                        <div class="stat-label">雛鵝平均 CPI</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🐣</div>
+                    <div class="stat-number" id="avgChickCPI">載入中...</div>
+                    <div class="stat-label">雛鵝平均 CPI</div>
                 </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">🥩</div>
-                        <div class="stat-number" id="avgMeatCPI">載入中...</div>
-                        <div class="stat-label">鵝肉平均 CPI</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🥩</div>
+                    <div class="stat-number" id="avgMeatCPI">載入中...</div>
+                    <div class="stat-label">鵝肉平均 CPI</div>
                 </div>
             </div>
         </div>
@@ -191,40 +168,6 @@
                         <h5>相關性分析</h5>
                         <p id="correlationInsight">分析中...</p>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- API 資訊區塊 -->
-        <div class="api-info">
-            <div class="api-header">
-                <h3>
-                    <i class="fas fa-code me-2"></i>
-                    API 端點
-                </h3>
-                <div class="api-status">
-                    <span class="badge bg-success">
-                        <i class="fas fa-circle me-1"></i>
-                        服務正常
-                    </span>
-                </div>
-            </div>
-
-            <div class="api-grid">
-                <div class="api-item">
-                    <div class="api-method get">GET</div>
-                    <a href="/api/goose-cpi" target="_blank">/api/goose-cpi</a>
-                    <div class="api-description">取得鵝價 CPI 詳細資料</div>
-                </div>
-                <div class="api-item">
-                    <div class="api-method get">GET</div>
-                    <a href="/api/years" target="_blank">/api/years</a>
-                    <div class="api-description">取得可用年份清單</div>
-                </div>
-                <div class="api-item">
-                    <div class="api-method get">GET</div>
-                    <a href="/api/cpi-summary" target="_blank">/api/cpi-summary</a>
-                    <div class="api-description">取得年度 CPI 統計摘要</div>
                 </div>
             </div>
         </div>

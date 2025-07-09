@@ -87,17 +87,38 @@ app.get('/api/years', (req, res) => {
 // API route for CPI summary
 app.get('/api/cpi-summary', (req, res) => {
   const db = new sqlite3.Database(dbPath);
+  const { startYear, endYear } = req.query;
 
-  db.all(`
+  let query = `
     SELECT 
       year,
       AVG(chick_cpi) as avg_chick_cpi,
       AVG(meat_cpi) as avg_meat_cpi,
       COUNT(*) as records_count
     FROM goose_cpi 
-    GROUP BY year 
-    ORDER BY year DESC
-  `, (err, rows) => {
+  `;
+  
+  let params = [];
+  let conditions = [];
+
+  if (startYear && endYear) {
+    conditions.push('year BETWEEN ? AND ?');
+    params.push(startYear, endYear);
+  } else if (startYear) {
+    conditions.push('year >= ?');
+    params.push(startYear);
+  } else if (endYear) {
+    conditions.push('year <= ?');
+    params.push(endYear);
+  }
+
+  if (conditions.length > 0) {
+    query += ' WHERE ' + conditions.join(' AND ');
+  }
+
+  query += ' GROUP BY year ORDER BY year DESC';
+
+  db.all(query, params, (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
