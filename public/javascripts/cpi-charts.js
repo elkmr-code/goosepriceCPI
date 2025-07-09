@@ -179,7 +179,7 @@ function initializeCharts() {
                 }
             }
         });
-        
+
         console.log('Charts initialized successfully!');
         
         // 立即顯示測試數據以確保圖表可見
@@ -235,6 +235,19 @@ function setupEventListeners() {
             const startYear = document.getElementById('startYear').value;
             const endYear = document.getElementById('endYear').value;
             
+            // 驗證年份範圍
+            if (startYear && endYear && parseInt(startYear) > parseInt(endYear)) {
+                if (window.dashboard) {
+                    window.dashboard.showError('起始年份不能大於結束年份，請重新選擇年份範圍');
+                } else {
+                    alert('起始年份不能大於結束年份，請重新選擇年份範圍');
+                }
+                return; // 停止執行後續操作
+            }
+
+            // 驗證通過後才執行更新
+            console.log('Year validation passed, updating charts...');
+
             // 更新圖表和統計數據
             loadCPIData(startYear, endYear);
             loadSummaryData(startYear, endYear);

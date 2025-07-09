@@ -293,27 +293,8 @@ curl http://localhost:3000/api/goose-cpi
 
 ## 📄 授權與聲明
 
-本專案採用 MIT 授權條款，僅供學術研究與教育用途使用。
+本專案僅供學術研究與教育用途使用。
 
-## 🤝 貢獻指南
 
-歡迎提交 Issue 和 Pull Request 來改善本專案：
 
-1. Fork 本專案
-2. 建立功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交變更 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 開啟 Pull Request
 
-## 📞 技術支援
-
-如有技術問題或建議，請透過以下方式聯繫：
-- 建立 GitHub Issue
-- 發送技術諮詢郵件
-
----
-
-**專案維護者**: [Your Name]  
-**最後更新**: 2024年12月9日  
-**版本**: v2.1.0  
-**授權**: MIT License
