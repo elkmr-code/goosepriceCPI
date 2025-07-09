@@ -1,16 +1,13 @@
 // CPI Charts JavaScript for Goose Price Visualization
 let cpiTrendChart, chickCpiChart, meatCpiChart;
 
-// Initialize charts when the page loads
+// Initialize charts when the DOM is ready and scripts are loaded.
+// The 'defer' attribute in the script tag will handle the timing.
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing charts...');
-    
-    // 等待一下讓 Chart.js 完全載入
-    setTimeout(() => {
-        initializeCharts();
-        loadInitialData();
-        setupEventListeners();
-    }, 500);
+    initializeCharts();
+    loadInitialData();
+    setupEventListeners();
 });
 
 function initializeCharts() {
@@ -35,6 +32,9 @@ function initializeCharts() {
     }
     
     try {
+        // The zoom plugin should auto-register. We will proceed assuming it's loaded.
+        // The script loading order in layout.pug is critical.
+
         // 設置 canvas 尺寸
         trendCanvas.style.maxHeight = '400px';
         chickCanvas.style.maxHeight = '300px';
@@ -87,6 +87,25 @@ function initializeCharts() {
                     legend: {
                         display: true,
                         position: 'top'
+                    },
+                    zoom: {
+                        pan: {
+                            enabled: true,
+                            mode: 'x',
+                            modifierKey: 'ctrl',
+                        },
+                        zoom: {
+                            drag: {
+                                enabled: true
+                            },
+                            wheel: {
+                                enabled: true
+                            },
+                            pinch: {
+                                enabled: true
+                            },
+                            mode: 'x',
+                        }
                     }
                 },
                 scales: {
@@ -107,6 +126,11 @@ function initializeCharts() {
                 }
             }
         });
+
+        // Add double-click event to reset zoom
+        if (trendCanvas) {
+            trendCanvas.ondblclick = () => cpiTrendChart.resetZoom();
+        }
 
         // Chick CPI Chart
         const chickCtx = chickCanvas.getContext('2d');
@@ -660,9 +684,3 @@ function convertToCSV(data) {
     return csvRows.join('\n');
 }
 
-function resetZoom(chartId) {
-    const chart = window[chartId];
-    if (chart && chart.resetZoom) {
-        chart.resetZoom();
-    }
-}
